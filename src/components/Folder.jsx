@@ -9,8 +9,20 @@ const Folder = ({ explorer }) => {
     isFolder: null,
   });
 
-  const handleNewFolder = (e) => {
+  const handleNewFolder = (e, isFolder) => {
     e.stopPropagation();
+    setExpand(true);
+    setShowInput({
+      visible: true,
+      isFolder,
+    });
+  };
+
+  const addFolder = (e) => {
+    if (e.keyCode === 13 && e.target.value) {
+      // Add Logic
+      setShowInput({ ...showInput, visible: false });
+    }
   };
 
   if (explorer.isFolder) {
@@ -29,14 +41,14 @@ const Folder = ({ explorer }) => {
           <div>
             <button
               onClick={(e) => {
-                handleNewFolder(e);
+                handleNewFolder(e, true);
               }}
             >
               Folder +
             </button>
             <button
               onClick={(e) => {
-                handleNewFolder(e);
+                handleNewFolder(e, false);
               }}
             >
               File +
@@ -44,6 +56,20 @@ const Folder = ({ explorer }) => {
           </div>
         </div>
         <div style={{ display: expand ? "block" : "none", paddingLeft: 24 }}>
+          {showInput.visible && (
+            <div className="inputContainer">
+              <span>{showInput.isFolder ? "📁" : "📄"}</span>
+              <input
+                type="text"
+                onBlur={() => {
+                  setShowInput({ ...showInput, visible: false });
+                }}
+                onKeyDown={addFolder}
+                className="inputContainer__input "
+                autoFocus
+              />
+            </div>
+          )}
           {explorer.items.map((exp) => {
             // return <span key={exp.id}>{exp.name}</span>;
             return <Folder explorer={exp} key={exp.id} />;
